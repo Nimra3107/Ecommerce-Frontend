@@ -12,7 +12,7 @@ function Products() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/products"
+        "https://ecommerce-backend-vert-delta.vercel.app/products"
       );
 
       if (!response.ok) {
@@ -116,7 +116,7 @@ function Products() {
     // Update stock through FastAPI
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/products/${product.id}/stock?quantity_change=-${quantityToAdd}`,
+        `https://ecommerce-backend-vert-delta.vercel.app/products/${product.id}/stock?quantity_change=-${quantityToAdd}`,
         {
           method: "PATCH"
         }

@@ -14,7 +14,7 @@ function AdminOrders() {
   const getOrders = async () => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/admin/orders"
+        "https://ecommerce-backend-vert-delta.vercel.app/admin/orders"
       );
 
       const data = await response.json();
@@ -45,7 +45,7 @@ function AdminOrders() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/admin/orders/${orderId}/status`,
+        `https://ecommerce-backend-vert-delta.vercel.app/admin/orders/${orderId}/status`,
         {
           method: "PATCH",
           headers: {

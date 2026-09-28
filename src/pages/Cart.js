@@ -42,7 +42,7 @@ function Cart() {
     try {
       // Return cart quantity back to stock
       const response = await fetch(
-        `http://127.0.0.1:8000/products/${productId}/stock?quantity_change=${productToDelete.cartQuantity}`,
+        `https://ecommerce-backend-vert-delta.vercel.app/products/${productId}/stock?quantity_change=${productToDelete.cartQuantity}`,
         {
           method: "PATCH"
         }

@@ -87,7 +87,7 @@ function Checkout() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/orders",
+        "https://ecommerce-backend-vert-delta.vercel.app/orders",
         {
           method: "POST",
           headers: {

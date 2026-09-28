@@ -16,7 +16,7 @@ function MyOrders() {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/orders/user/${loggedInUserId}`
+          `https://ecommerce-backend-vert-delta.vercel.app/orders/user/${loggedInUserId}`
         );
 
         const data = await response.json();
