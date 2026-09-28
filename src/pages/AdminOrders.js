@@ -125,9 +125,9 @@ function AdminOrders() {
     (order) => order.status === "Processing"
   ).length;
 
-  const shippedOrders = orders.filter(
-    (order) => order.status === "Shipped"
-  ).length;
+  // const shippedOrders = orders.filter(
+  //   (order) => order.status === "Shipped"
+  // ).length;
 
   const deliveredOrders = orders.filter(
     (order) => order.status === "Delivered"
