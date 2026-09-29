@@ -9,12 +9,12 @@ function ProductCard({ product, increaseQuantity, decreaseQuantity, addToCart })
         alt={product.name}
       />
 
-      <h2>{product.name}</h2>
+      <h2>{product.name}</h2> 
 
       <p>{product.description}</p>
 
       <p className="product-category">
-        <strong>Category:</strong> {product.category}
+        <strong>Category:</strong> {product.category_name}
       </p>
 
       <p className="product-price">

@@ -13,6 +13,10 @@ function Checkout() {
 
   const navigate = useNavigate();
 
+  const API_URL = window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://ecommerce-backend-vert-delta.vercel.app";
+
   // Get current user's cart
   useEffect(() => {
     const loggedInUserId =
@@ -87,7 +91,7 @@ function Checkout() {
 
     try {
       const response = await fetch(
-        "https://ecommerce-backend-vert-delta.vercel.app/orders",
+        `${API_URL}/orders`,
         {
           method: "POST",
           headers: {

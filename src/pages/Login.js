@@ -8,12 +8,17 @@ function Login() {
 
   const navigate = useNavigate();
 
+  const API_URL = window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://ecommerce-backend-vert-delta.vercel.app";
+
+
   const handleLogin = async (e) => {
 
     e.preventDefault();
 
     const response = await fetch(
-      "https://ecommerce-backend-vert-delta.vercel.app/login",
+      `${API_URL}/login`,
       {
         method: "POST",
 

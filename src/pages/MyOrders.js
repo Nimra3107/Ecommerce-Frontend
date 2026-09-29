@@ -4,6 +4,10 @@ function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const API_URL = window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://ecommerce-backend-vert-delta.vercel.app";
+
   useEffect(() => {
     const getOrders = async () => {
       const loggedInUserId =
@@ -16,7 +20,7 @@ function MyOrders() {
 
       try {
         const response = await fetch(
-          `https://ecommerce-backend-vert-delta.vercel.app/orders/user/${loggedInUserId}`
+          `${API_URL}/orders/user/${loggedInUserId}`
         );
 
         const data = await response.json();

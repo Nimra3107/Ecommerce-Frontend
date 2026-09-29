@@ -7,12 +7,15 @@ function Products() {
 
   const navigate = useNavigate();
 
+  const API_URL = window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://ecommerce-backend-vert-delta.vercel.app";
+
   // Get products from FastAPI
   const getProducts = async () => {
-
     try {
       const response = await fetch(
-        "https://ecommerce-backend-vert-delta.vercel.app/products"
+        `${API_URL}/products`
       );
 
       if (!response.ok) {
@@ -116,7 +119,7 @@ function Products() {
     // Update stock through FastAPI
     try {
       const response = await fetch(
-        `https://ecommerce-backend-vert-delta.vercel.app/products/${product.id}/stock?quantity_change=-${quantityToAdd}`,
+        `${API_URL}/products/${product.id}/stock?quantity_change=-${quantityToAdd}`,
         {
           method: "PATCH"
         }

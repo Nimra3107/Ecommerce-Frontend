@@ -7,12 +7,16 @@ function Register() {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+  const API_URL = window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://ecommerce-backend-vert-delta.vercel.app";
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
     const response = await fetch(
-      "https://ecommerce-backend-vert-delta.vercel.app/register",
+      `${API_URL}/register`,
       {
         method: "POST",
         headers: {

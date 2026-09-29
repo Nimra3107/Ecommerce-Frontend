@@ -8,9 +8,36 @@ function AddProduct() {
   const [imagePreview, setImagePreview] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [category, setCategory] = useState("");
+  const [, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  const [categoryId, setCategoryId] = useState("");
 
   const navigate = useNavigate();
+
+  const API_URL = window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://ecommerce-backend-vert-delta.vercel.app";
+
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const response = await fetch(
+          `${API_URL}/categories`
+        );
+
+        const data = await response.json();
+
+        console.log("Categories:", data);
+
+        setCategories(data);
+      } catch (error) {
+        console.log("Categories error:", error);
+      }
+    };
+
+    getCategories();
+  }, []);
 
   useEffect(() => {
     const adminLoggedIn =
@@ -50,7 +77,7 @@ function AddProduct() {
 
       formData.append("name", name);
       formData.append("description", description);
-      formData.append("category", category);
+      formData.append("category_id", categoryId);
       formData.append("price", price);
       formData.append("quantity", quantity);
       formData.append("image", imageFile);
@@ -58,7 +85,7 @@ function AddProduct() {
       // Send product to FastAPI
       const response = await fetch(
         // "http://127.0.0.1:8000/products",
-        "https://ecommerce-backend-vert-delta.vercel.app/products",
+        `${API_URL}/products`,
         {
           method: "POST",
           body: formData
@@ -141,7 +168,7 @@ function AddProduct() {
             />
           </div>
 
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Category</label>
 
             <select
@@ -178,6 +205,26 @@ function AddProduct() {
               <option value="Home">
                 Home
               </option>
+            </select>
+          </div> */}
+          <div className="form-group">
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              required
+            >
+              <option value="">
+                Select Category
+              </option>
+
+              {categories.map((category) => (
+                <option
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.category}
+                </option>
+              ))}
             </select>
           </div>
 

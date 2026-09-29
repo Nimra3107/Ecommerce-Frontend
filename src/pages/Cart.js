@@ -5,6 +5,9 @@ function Cart() {
   const [cartProducts, setCartProducts] = useState([]);
 
   const navigate = useNavigate();
+  const API_URL = window.location.hostname === "localhost"
+  ? "http://127.0.0.1:8000"
+  : "https://ecommerce-backend-vert-delta.vercel.app";
 
   // Get current user's cart
   useEffect(() => {
@@ -42,7 +45,8 @@ function Cart() {
     try {
       // Return cart quantity back to stock
       const response = await fetch(
-        `https://ecommerce-backend-vert-delta.vercel.app/products/${productId}/stock?quantity_change=${productToDelete.cartQuantity}`,
+        `${API_URL}/products/${productId}/stock?quantity_change=${productToDelete.cartQuantity}`,
+        
         {
           method: "PATCH"
         }
