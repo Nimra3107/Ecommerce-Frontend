@@ -37,7 +37,7 @@ function AddProduct() {
     };
 
     getCategories();
-  }, []);
+  }, [API_URL]);
 
   useEffect(() => {
     const adminLoggedIn =
@@ -207,6 +207,7 @@ function AddProduct() {
               </option>
             </select>
           </div> */}
+
           <div className="form-group">
             <select
               value={categoryId}

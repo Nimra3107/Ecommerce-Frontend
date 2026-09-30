@@ -12,34 +12,49 @@ function Products() {
     : "https://ecommerce-backend-vert-delta.vercel.app";
 
   // Get products from FastAPI
-  const getProducts = async () => {
-    try {
-      const response = await fetch(
-        `${API_URL}/products`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch products");
-      }
-
-      const data = await response.json();
-
-      console.log("Products from FastAPI:", data);
-
-      const productsWithSelection = data.map((product) => ({
-        ...product,
-        selectedQuantity: 1
-      }));
-
-      setProducts(productsWithSelection);
-    } catch (error) {
-      console.log("Products error:", error);
-    }
-  };
-
   useEffect(() => {
+
+    const getProducts = async () => {
+  
+      try {
+  
+        const response = await fetch(
+          `${API_URL}/products`
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+  
+        const data = await response.json();
+  
+        console.log(
+          "Products from FastAPI:",
+          data
+        );
+  
+        const productsWithSelection = data.map(
+          (product) => ({
+            ...product,
+            selectedQuantity: 1
+          })
+        );
+  
+        setProducts(productsWithSelection);
+  
+      } catch (error) {
+  
+        console.log(
+          "Products error:",
+          error
+        );
+  
+      }
+    };
+  
     getProducts();
-  }, []);
+  
+  }, [API_URL]);
 
   // Increase selected quantity
   const increaseQuantity = (product) => {
@@ -77,109 +92,159 @@ function Products() {
     );
   };
 
-  const addToCart = async (product) => {
-    const loggedInUserId =
-      localStorage.getItem("loggedInUserId");
-    console.log("User ID in Products:", loggedInUserId);
+  // const addToCart = async (product) => {
+  //   const loggedInUserId =
+  //     localStorage.getItem("loggedInUserId");
+  //   console.log("User ID in Products:", loggedInUserId);
 
+  //   if (!loggedInUserId) {
+  //     alert("Please login first");
+  //     navigate("/login");
+  //     return;
+  //   }
+
+  //   const allUserCarts =
+  //     JSON.parse(localStorage.getItem("cart")) || {};
+
+  //   const userCart =
+  //     Array.isArray(allUserCarts[loggedInUserId])
+  //       ? allUserCarts[loggedInUserId]
+  //       : [];
+
+  //   const existingProduct = userCart.find(
+  //     (item) => item.id === product.id
+  //   );
+
+  //   let quantityToAdd = product.selectedQuantity;
+
+  //   // If product already exists in cart
+  //   if (existingProduct) {
+  //     const newCartQuantity =
+  //       existingProduct.cartQuantity +
+  //       product.selectedQuantity;
+
+  //     if (newCartQuantity > product.quantity) {
+  //       alert("You cannot add more than available stock");
+  //       return;
+  //     }
+
+  //     quantityToAdd = product.selectedQuantity;
+  //   }
+
+  //   // Update stock through FastAPI
+  //   try {
+  //     const response = await fetch(
+  //       `${API_URL}/products/${product.id}/stock?quantity_change=-${quantityToAdd}`,
+  //       {
+  //         method: "PATCH"
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     console.log("Stock API status:", response.status);
+  //     console.log("Stock API response:", data);
+
+  //     if (!response.ok || data.message !== "Stock updated successfully") {
+  //       alert(data.message || "Unable to update stock");
+  //       return;
+  //     }
+
+  //     let updatedUserCart;
+
+  //     // Product already exists in cart
+  //     if (existingProduct) {
+  //       updatedUserCart = userCart.map((item) =>
+  //         item.id === product.id
+  //           ? {
+  //             ...item,
+  //             cartQuantity:
+  //               item.cartQuantity +
+  //               product.selectedQuantity
+  //           }
+  //           : item
+  //       );
+  //     }
+
+  //     // Product does not exist in cart
+  //     else {
+  //       const newCartProduct = {
+  //         ...product,
+  //         cartQuantity: product.selectedQuantity
+  //       };
+
+  //       updatedUserCart = [
+  //         ...userCart,
+  //         newCartProduct
+  //       ];
+  //     }
+
+  //     allUserCarts[loggedInUserId] =
+  //       updatedUserCart;
+
+  //     localStorage.setItem(
+  //       "cart",
+  //       JSON.stringify(allUserCarts)
+  //     );
+
+  //     navigate("/cart");
+
+  //   } catch (error) {
+  //     console.log("Stock update error:", error);
+  //     alert("Unable to connect to server");
+  //   }
+  // };
+
+  const addToCart = async (product) => {
+    // const loggedInUserId =
+    //   localStorage.getItem("loggedInUserId");
+    const loggedInUserId =
+      sessionStorage.getItem("loggedInUserId");
+  
+    console.log("User ID in Products:", loggedInUserId);
+  
     if (!loggedInUserId) {
       alert("Please login first");
       navigate("/login");
       return;
     }
-
-    const allUserCarts =
-      JSON.parse(localStorage.getItem("cart")) || {};
-
-    const userCart =
-      Array.isArray(allUserCarts[loggedInUserId])
-        ? allUserCarts[loggedInUserId]
-        : [];
-
-    const existingProduct = userCart.find(
-      (item) => item.id === product.id
-    );
-
-    let quantityToAdd = product.selectedQuantity;
-
-    // If product already exists in cart
-    if (existingProduct) {
-      const newCartQuantity =
-        existingProduct.cartQuantity +
-        product.selectedQuantity;
-
-      if (newCartQuantity > product.quantity) {
-        alert("You cannot add more than available stock");
-        return;
-      }
-
-      quantityToAdd = product.selectedQuantity;
-    }
-
-    // Update stock through FastAPI
+  
+    const quantityToAdd = product.selectedQuantity;
+  
     try {
-      const response = await fetch(
-        `${API_URL}/products/${product.id}/stock?quantity_change=-${quantityToAdd}`,
-        {
-          method: "PATCH"
-        }
-      );
-
+      const response = await fetch(`${API_URL}/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          // user_id: loggedInUserId,
+          user_id: Number(loggedInUserId),
+          product_id: product.id,
+          product_name: product.name,
+          price: product.price,
+          image: product.image,
+          cart_quantity: quantityToAdd
+        })
+      });
+  
       const data = await response.json();
-
-      console.log("Stock API status:", response.status);
-      console.log("Stock API response:", data);
-
-      if (!response.ok || data.message !== "Stock updated successfully") {
-        alert(data.message || "Unable to update stock");
+  
+      console.log("Cart API status:", response.status);
+      console.log("Cart API response:", data);
+  
+      if (!response.ok) {
+        alert(data.detail || data.message || "Unable to add to cart");
         return;
       }
-
-      let updatedUserCart;
-
-      // Product already exists in cart
-      if (existingProduct) {
-        updatedUserCart = userCart.map((item) =>
-          item.id === product.id
-            ? {
-              ...item,
-              cartQuantity:
-                item.cartQuantity +
-                product.selectedQuantity
-            }
-            : item
-        );
-      }
-
-      // Product does not exist in cart
-      else {
-        const newCartProduct = {
-          ...product,
-          cartQuantity: product.selectedQuantity
-        };
-
-        updatedUserCart = [
-          ...userCart,
-          newCartProduct
-        ];
-      }
-
-      allUserCarts[loggedInUserId] =
-        updatedUserCart;
-
-      localStorage.setItem(
-        "cart",
-        JSON.stringify(allUserCarts)
-      );
-
+  
       navigate("/cart");
-
+  
     } catch (error) {
-      console.log("Stock update error:", error);
+      console.log("Add to cart error:", error);
       alert("Unable to connect to server");
     }
   };
-
 
   return (
     <div className="products-container">

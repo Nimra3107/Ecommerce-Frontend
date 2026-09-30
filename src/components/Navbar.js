@@ -3,46 +3,65 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 function Navbar() {
-  const [loggedIn, ] = useState(
-    !!localStorage.getItem("loggedInUserId")
+  // const [loggedInUserId, ] = useState(
+  //   !!localStorage.getItem("loggedInUserId")
+  // );
+  // const [loggedInUserId, ] = useState(
+  //   !!sessionStorage.getItem("loggedInUserId")
+  // );
+
+  // const navigate = useNavigate();
+
+
+  // const handleLogout = async () => {
+  //   const loggedInUserId =
+  //     localStorage.getItem("loggedInUserId");
+
+  //   const allUserCarts =
+  //     JSON.parse(localStorage.getItem("cart")) || {};
+
+  //   const userCart =
+  //     allUserCarts[loggedInUserId] || [];
+
+  //   // Cart ki quantity stock mein wapas add karo
+  //   for (const product of userCart) {
+  //     await fetch(
+  //       `http://127.0.0.1:8000/products/${product.id}/stock?quantity_change=${product.cartQuantity}`,
+  //       {
+  //         method: "PATCH"
+  //       }
+  //     );
+  //   }
+
+  //   // User ka cart clear
+  //   delete allUserCarts[loggedInUserId];
+
+  //   localStorage.setItem(
+  //     "cart",
+  //     JSON.stringify(allUserCarts)
+  //   );
+
+  //   // Logout
+  //   // localStorage.removeItem("loggedInUserId");
+  //   sessionStorage.removeItem("loggedInUserId");
+  //   navigate("/login")
+  //   // window.location.href = "/";
+  // };
+
+  const [loggedInUserId, setLoggedInUserId] = useState(
+    !!sessionStorage.getItem("loggedInUserId")
   );
-
   const navigate = useNavigate();
-
-
-  const handleLogout = async () => {
-    const loggedInUserId =
-      localStorage.getItem("loggedInUserId");
-  
-    const allUserCarts =
-      JSON.parse(localStorage.getItem("cart")) || {};
-  
-    const userCart =
-      allUserCarts[loggedInUserId] || [];
-  
-    // Cart ki quantity stock mein wapas add karo
-    for (const product of userCart) {
-      await fetch(
-        `http://127.0.0.1:8000/products/${product.id}/stock?quantity_change=${product.cartQuantity}`,
-        {
-          method: "PATCH"
-        }
-      );
-    }
-  
-    // User ka cart clear
-    delete allUserCarts[loggedInUserId];
-  
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(allUserCarts)
-    );
-  
-    // Logout
-    localStorage.removeItem("loggedInUserId");
-    navigate("/login")
-    // window.location.href = "/";
+  const handleLogout = () => {
+    // Remove logged-in user 
+    sessionStorage.removeItem("loggedInUserId");
+    // Update navbar 
+    setLoggedInUserId(false);
+    // Go to login page 
+    navigate("/login");
   };
+
+
 
   return (
     <nav className="navbar">
@@ -53,7 +72,7 @@ function Navbar() {
         <Link to="/my-orders">My Orders</Link>
         <Link to="/cart">Cart</Link>
 
-        {loggedIn ? (
+        {/* {loggedIn ? (
           <button
             className="logout-btn"
             onClick={handleLogout}
@@ -62,6 +81,18 @@ function Navbar() {
           </button>
         ) : (
           <Link to="/login">Login</Link>
+        )} */}
+        {loggedInUserId ? (
+          <button
+            className="logout-btn"
+            onClick={handleLogout}>
+            Logout
+          </button>
+        ) : (
+          <Link to="/login">Login</Link>
+          // <button onClick={() => navigate("/login")}>
+          //   Login
+          // </button>
         )}
       </div>
     </nav>

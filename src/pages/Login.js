@@ -41,7 +41,12 @@ function Login() {
     }
 
     // Save logged-in user's ID
-    localStorage.setItem(
+    // localStorage.setItem(
+    //   "loggedInUserId",
+    //   data.id
+    // );
+
+    sessionStorage.setItem(
       "loggedInUserId",
       data.id
     );

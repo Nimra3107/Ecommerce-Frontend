@@ -39,7 +39,11 @@ function Register() {
     }
 
     // Save logged-in user's ID
-    localStorage.setItem("loggedInUserId", data.id);
+    // localStorage.setItem("loggedInUserId", data.id);
+    sessionStorage.setItem(
+      "loggedInUserId",
+      data.id
+    );
 
     // Go to products page
     navigate("/");

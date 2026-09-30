@@ -10,87 +10,156 @@ function Cart() {
   : "https://ecommerce-backend-vert-delta.vercel.app";
 
   // Get current user's cart
+  // useEffect(() => {
+  //   const loggedInUserId =
+  //     localStorage.getItem("loggedInUserId");
+
+  //   const allUserCarts =
+  //     JSON.parse(localStorage.getItem("cart")) || {};
+
+  //   const userCart =
+  //     allUserCarts[loggedInUserId] || [];
+
+  //   setCartProducts(userCart);
+  // }, []);
+
   useEffect(() => {
-    const loggedInUserId =
-      localStorage.getItem("loggedInUserId");
-
-    const allUserCarts =
-      JSON.parse(localStorage.getItem("cart")) || {};
-
-    const userCart =
-      allUserCarts[loggedInUserId] || [];
-
-    setCartProducts(userCart);
-  }, []);
-
-  const deleteFromCart = async (productId) => {
-    const loggedInUserId =
-      localStorage.getItem("loggedInUserId");
-
-    const allUserCarts =
-      JSON.parse(localStorage.getItem("cart")) || {};
-
-    const userCart =
-      allUserCarts[loggedInUserId] || [];
-
-    // Find product in cart
-    const productToDelete = userCart.find(
-      (product) => product.id === productId
-    );
-
-    if (!productToDelete) {
-      return;
-    }
-
-    try {
-      // Return cart quantity back to stock
-      const response = await fetch(
-        `${API_URL}/products/${productId}/stock?quantity_change=${productToDelete.cartQuantity}`,
-        
-        {
-          method: "PATCH"
-        }
-      );
-
-      const data = await response.json();
-
-      console.log("Stock API status:", response.status);
-      console.log("Stock API response:", data);
-
-      if (!response.ok || data.message !== "Stock updated successfully") {
-        alert(data.message || "Unable to update stock");
+    const getCart = async () => {
+      // const loggedInUserId =
+      //   localStorage.getItem("loggedInUserId");
+      const loggedInUserId =
+        sessionStorage.getItem("loggedInUserId");
+  
+      if (!loggedInUserId) {
         return;
       }
+  
+      try {
+        const response = await fetch(
+          `${API_URL}/cart/${loggedInUserId}`
+        );
+  
+        const data = await response.json();
+  
+        console.log("Cart data:", data);
+  
+        if (!response.ok) {
+          alert(data.detail || "Unable to get cart");
+          return;
+        }
+  
+        setCartProducts(data);
+  
+      } catch (error) {
+        console.log("Get cart error:", error);
+        alert("Unable to connect to server");
+      }
+    };
+  
+    getCart();
+  }, [API_URL]);
 
-      // Remove product from cart
-      const updatedUserCart = userCart.filter(
-        (product) => product.id !== productId
+  // const deleteFromCart = async (productId) => {
+  //   const loggedInUserId =
+  //     localStorage.getItem("loggedInUserId");
+
+  //   const allUserCarts =
+  //     JSON.parse(localStorage.getItem("cart")) || {};
+
+  //   const userCart =
+  //     allUserCarts[loggedInUserId] || [];
+
+  //   // Find product in cart
+  //   const productToDelete = userCart.find(
+  //     (product) => product.id === productId
+  //   );
+
+  //   if (!productToDelete) {
+  //     return;
+  //   }
+
+  //   try {
+  //     // Return cart quantity back to stock
+  //     const response = await fetch(
+  //       `${API_URL}/products/${productId}/stock?quantity_change=${productToDelete.cartQuantity}`,
+        
+  //       {
+  //         method: "PATCH"
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     console.log("Stock API status:", response.status);
+  //     console.log("Stock API response:", data);
+
+  //     if (!response.ok || data.message !== "Stock updated successfully") {
+  //       alert(data.message || "Unable to update stock");
+  //       return;
+  //     }
+
+  //     // Remove product from cart
+  //     const updatedUserCart = userCart.filter(
+  //       (product) => product.id !== productId
+  //     );
+
+  //     // Update current user's cart
+  //     allUserCarts[loggedInUserId] =
+  //       updatedUserCart;
+
+  //     // Save updated cart
+  //     localStorage.setItem(
+  //       "cart",
+  //       JSON.stringify(allUserCarts)
+  //     );
+
+  //     // Update UI
+  //     setCartProducts(updatedUserCart);
+
+  //   } catch (error) {
+  //     console.log("Delete product error:", error);
+  //     alert("Unable to connect to server");
+  //   }
+  // };
+
+
+  // Calculate total quantity
+  
+  const deleteFromCart = async (cartId) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/cart/${cartId}`,
+        {
+          method: "DELETE"
+        }
       );
-
-      // Update current user's cart
-      allUserCarts[loggedInUserId] =
-        updatedUserCart;
-
-      // Save updated cart
-      localStorage.setItem(
-        "cart",
-        JSON.stringify(allUserCarts)
+  
+      const data = await response.json();
+  
+      console.log("Delete cart status:", response.status);
+      console.log("Delete cart response:", data);
+  
+      if (!response.ok) {
+        alert(data.detail || data.message || "Unable to delete item");
+        return;
+      }
+  
+      // Remove item from current UI
+      setCartProducts((previousCart) =>
+        previousCart.filter(
+          (item) => item.id !== cartId
+        )
       );
-
-      // Update UI
-      setCartProducts(updatedUserCart);
-
+  
     } catch (error) {
-      console.log("Delete product error:", error);
+      console.log("Delete cart error:", error);
       alert("Unable to connect to server");
     }
   };
 
-
-  // Calculate total quantity
   const totalQuantity = cartProducts.reduce(
     (total, product) => {
-      return total + product.cartQuantity;
+      return total + product.cart_quantity;
     },
     0
   );
@@ -100,7 +169,7 @@ function Cart() {
     (total, product) => {
       return (
         total +
-        product.price * product.cartQuantity
+        product.price * product.cart_quantity
       );
     },
     0
@@ -143,7 +212,7 @@ function Cart() {
               />
 
               <div className="cart-details">
-                <h2>{product.name}</h2>
+                <h2>{product.product_name}</h2>
 
                 <p className="description">
                   {product.description}
@@ -156,14 +225,14 @@ function Cart() {
 
                 <p>
                   <strong>Quantity:</strong>{" "}
-                  {product.cartQuantity}
+                  {product.cart_quantity}
                 </p>
 
                 <p className="product-total">
                   <strong>Product Total:</strong>{" "}
                   Rs.{" "}
                   {product.price *
-                    product.cartQuantity}
+                    product.cart_quantity}
                 </p>
 
                 <button
